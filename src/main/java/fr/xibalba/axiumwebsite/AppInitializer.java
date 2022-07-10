@@ -7,12 +7,11 @@ import org.springframework.web.context.support.AnnotationConfigWebApplicationCon
 import org.springframework.web.filter.DelegatingFilterProxy;
 
 import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
 
 public class AppInitializer implements WebApplicationInitializer {
 
     @Override
-    public void onStartup(ServletContext servletContext) throws ServletException {
+    public void onStartup(ServletContext servletContext) {
 
         AnnotationConfigWebApplicationContext root = new AnnotationConfigWebApplicationContext();
         root.register(SecSecurityConfig.class);
