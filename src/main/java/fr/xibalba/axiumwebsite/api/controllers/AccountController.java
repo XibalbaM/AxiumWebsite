@@ -73,7 +73,7 @@ public class AccountController {
             return account;
         } else {
 
-            throw new IllegalArgumentException("You must provide either a username or an id");
+            return null;
         }
     }
 

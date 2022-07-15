@@ -1,6 +1,6 @@
-package fr.xibalba.axiumwebsite;
+package fr.xibalba.axiumwebsite.configs;
 
-import fr.xibalba.axiumwebsite.configs.SecSecurityConfig;
+import fr.xibalba.axiumwebsite.security.SecurityConfiguration;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
@@ -14,7 +14,7 @@ public class AppInitializer implements WebApplicationInitializer {
     public void onStartup(ServletContext servletContext) {
 
         AnnotationConfigWebApplicationContext root = new AnnotationConfigWebApplicationContext();
-        root.register(SecSecurityConfig.class);
+        root.register(SecurityConfiguration.class);
 
         servletContext.addListener(new ContextLoaderListener(root));
 

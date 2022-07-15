@@ -18,11 +18,11 @@ public class GameController {
     private GameRepository gameRepository;
 
     @RequestMapping("")
-    public List<Game> infos(@RequestParam(value = "name", required = false) String username, @RequestParam(value = "id", required = false) Integer id) {
+    public List<Game> infos(@RequestParam(value = "name", required = false) String name, @RequestParam(value = "id", required = false) Integer id) {
 
-        if (username != null && gameRepository.findByName(username) != null) {
+        if (name != null && gameRepository.findByName(name) != null) {
 
-            return List.of(gameRepository.findByName(username));
+            return List.of(gameRepository.findByName(name));
         } else if (id != null && gameRepository.findById(id).isPresent()) {
 
             return List.of(gameRepository.findById(id).get());

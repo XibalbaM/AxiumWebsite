@@ -10,13 +10,15 @@
     </parent>
     <groupId>fr.xibalba</groupId>
     <artifactId>AxiumWebsite</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.1-SNAPSHOT</version>
+    <packaging>jar</packaging>
     <name>AxiumWebsite</name>
     <description>AxiumWebsite</description>
     <properties>
         <java.version>18</java.version>
         <vaadin.version>23.1.2</vaadin.version>
     </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -82,7 +84,13 @@
             <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-oauth2-jose</artifactId>
+            <version>5.6.3</version>
+        </dependency>
     </dependencies>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -107,6 +115,17 @@
                             <artifactId>lombok</artifactId>
                         </exclude>
                     </excludes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.heroku.sdk</groupId>
+                <artifactId>heroku-maven-plugin</artifactId>
+                <version>3.0.3</version>
+                <configuration>
+                    <appName>axium-centrality</appName>
+                    <processTypes>
+                        <web>java $JAVA_OPTS -jar target/${project.artifactId}-${project.version}.jar --server.port=$PORT</web>
+                    </processTypes>
                 </configuration>
             </plugin>
         </plugins>
