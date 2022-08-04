@@ -1,5 +1,6 @@
 package fr.xibalba.axiumwebsite.website.pages.login;
 
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.login.LoginForm;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -8,14 +9,24 @@ import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.HasDynamicTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
+import fr.xibalba.axiumwebsite.security.SecurityService;
+import fr.xibalba.axiumwebsite.website.layouts.MainLayout;
+import org.springframework.beans.factory.annotation.Autowired;
 
-@Route("login")
+@Route(value = "login", layout = MainLayout.class)
 @AnonymousAllowed
 public class LoginView extends VerticalLayout implements BeforeEnterObserver, HasDynamicTitle {
 
     private final LoginForm login = new LoginForm();
 
-    public LoginView() {
+    public LoginView(@Autowired SecurityService securityService) {
+
+        if (securityService.getAuthenticatedUser() != null) {
+
+            UI.getCurrent().navigate("");
+            return;
+        }
+
         addClassName("login-view");
         setSizeFull();
 

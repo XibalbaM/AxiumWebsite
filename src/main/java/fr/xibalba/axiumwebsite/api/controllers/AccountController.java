@@ -3,10 +3,7 @@ package fr.xibalba.axiumwebsite.api.controllers;
 import fr.xibalba.axiumwebsite.api.repositories.AccountRepository;
 import fr.xibalba.axiumwebsite.api.tables.Account;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -17,9 +14,9 @@ import java.util.function.Supplier;
 public class AccountController {
 
     @Autowired
-    private AccountRepository accountRepository;
+    public AccountRepository accountRepository;
 
-    Supplier<String> tokenSupplier = () -> {
+    public static final Supplier<String> tokenSupplier = () -> {
 
         StringBuilder token = new StringBuilder();
         long currentTimeInMilisecond = Instant.now().toEpochMilli();
@@ -30,18 +27,27 @@ public class AccountController {
     @RequestMapping("/connect")
     public Account connect(@RequestParam(value = "username") String username, @RequestParam(value = "password") String password) {
 
+        System.out.println("username: " + username);
+
         Account account = accountRepository.findByUsernameAndPassword(username, password);
 
         if (account == null) {
+
+            System.out.println("account not found");
+
             return null;
         }
 
         if (accountRepository.findToken(account.getId()) == null) {
 
+            System.out.println("token not found");
+
             accountRepository.generateToken(account.getId(), tokenSupplier.get());
         }
 
         account.setPassword(null);
+
+        System.out.println("account found");
 
         return account;
     }
@@ -68,9 +74,7 @@ public class AccountController {
 
         if (id != null && accountRepository.findById(id).isPresent()) {
 
-            Account account = accountRepository.findById(id).get().setPassword(null).setToken(null);
-
-            return account;
+            return accountRepository.findById(id).get().setPassword(null).setToken(null);
         } else {
 
             return null;

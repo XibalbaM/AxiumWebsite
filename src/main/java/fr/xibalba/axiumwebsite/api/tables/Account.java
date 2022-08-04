@@ -1,10 +1,13 @@
 package fr.xibalba.axiumwebsite.api.tables;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import fr.xibalba.axiumwebsite.api.controllers.AccountController;
 import lombok.*;
 
 import javax.persistence.*;
 import java.sql.Date;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Entity
@@ -85,4 +88,22 @@ public class Account {
     @JsonManagedReference
     @ToString.Exclude
     List<Role> roles;
+
+    public static Account create(String username, String email, String password, String icon_url) {
+        Account account = new Account();
+        account.username = username;
+        account.email = email;
+        account.password = password;
+        account.icon_url = icon_url;
+        account.token = AccountController.tokenSupplier.get();
+        account.tokenExpiration = Date.valueOf(LocalDate.now().plus(30, ChronoUnit.DAYS));
+        account.creationDate = Date.valueOf(LocalDate.now());
+        account.xp = 0;
+        account.fidelity = 0;
+        account.premium = 0;
+        account.emailVerified = false;
+        account.enabled = true;
+
+        return account;
+    }
 }
