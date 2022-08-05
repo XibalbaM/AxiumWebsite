@@ -1,5 +1,6 @@
 package fr.xibalba.axiumwebsite.api.controllers;
 
+import fr.xibalba.axiumwebsite.api.RestResponse;
 import fr.xibalba.axiumwebsite.api.repositories.RoleRepository;
 import fr.xibalba.axiumwebsite.api.tables.Role;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+import static fr.xibalba.axiumwebsite.api.RestResponse.*;
+
 @RestController
 @RequestMapping("/api/roles")
 public class RoleController {
@@ -17,7 +20,7 @@ public class RoleController {
     private RoleRepository roleRepository;
 
     @RequestMapping("")
-    public List<Role> infos(@RequestParam(value = "name", required = false) String name, @RequestParam(value = "id", required = false) Integer id) {
+    public RestResponse<List<Role>> infos(@RequestParam(value = "name", required = false) String name, @RequestParam(value = "id", required = false) Integer id) {
 
         System.out.println("name: " + name);
 

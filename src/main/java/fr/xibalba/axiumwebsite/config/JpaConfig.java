@@ -1,4 +1,4 @@
-package fr.xibalba.axiumwebsite.configs;
+package fr.xibalba.axiumwebsite.config;
 
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;

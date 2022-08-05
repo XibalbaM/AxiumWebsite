@@ -1,4 +1,4 @@
-package fr.xibalba.axiumwebsite.configs;
+package fr.xibalba.axiumwebsite.config;
 
 import com.vaadin.flow.component.page.AppShellConfigurator;
 import com.vaadin.flow.server.AppShellSettings;

@@ -19,6 +19,8 @@ public class HomeView extends VerticalLayout implements HasDynamicTitle {
         add(new H1("Home"));
     }
 
+
+
     @Override
     public String getPageTitle() {
         return getTranslation("view.home.title");

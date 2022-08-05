@@ -1,9 +1,12 @@
 package fr.xibalba.axiumwebsite.api.tables;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
+import org.hibernate.Hibernate;
 
 import javax.persistence.*;
 import java.sql.Date;
+import java.util.Objects;
 
 @Entity
 @Table(name = "games")
@@ -12,7 +15,7 @@ import java.sql.Date;
 @Setter
 @Getter
 @ToString
-@EqualsAndHashCode
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Game {
 
     @Id
@@ -34,4 +37,19 @@ public class Game {
 
     @Column(name = "last_update", nullable = false)
     Date last_update;
+
+    @Override
+    public boolean equals(Object o) {
+
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        Game game = (Game) o;
+        return id != null && Objects.equals(id, game.id);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return getClass().hashCode();
+    }
 }

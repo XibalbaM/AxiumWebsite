@@ -1,13 +1,21 @@
 package fr.xibalba.axiumwebsite.api.controllers;
 
+import fr.xibalba.axiumwebsite.api.RestResponse;
 import fr.xibalba.axiumwebsite.api.repositories.AccountRepository;
 import fr.xibalba.axiumwebsite.api.tables.Account;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.time.Instant;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Supplier;
+
+import static fr.xibalba.axiumwebsite.api.ApiError.Account.*;
+import static fr.xibalba.axiumwebsite.api.ApiError.Global.*;
+import static fr.xibalba.axiumwebsite.api.RestResponse.*;
 
 @RestController
 @RequestMapping("/api/user")
@@ -25,65 +33,107 @@ public class AccountController {
     };
 
     @RequestMapping("/connect")
-    public Account connect(@RequestParam(value = "username") String username, @RequestParam(value = "password") String password) {
-
-        System.out.println("username: " + username);
+    public RestResponse<Account> connect(@RequestParam(value = "username") String username, @RequestParam(value = "password") String password) {
 
         Account account = accountRepository.findByUsernameAndPassword(username, password);
 
         if (account == null) {
 
-            System.out.println("account not found");
+            if (accountRepository.findByUsername(username) == null) {
 
-            return null;
+                return error(ACCOUNT_NOT_FOUND);
+            } else {
+
+                return error(BAD_CREDENTIALS);
+            }
         }
 
-        if (accountRepository.findToken(account.getId()) == null) {
+        if (!account.isEnabled()) {
 
-            System.out.println("token not found");
+            return error(ACCOUNT_IS_BANNED_OR_DISABLED);
+        }
 
-            accountRepository.generateToken(account.getId(), tokenSupplier.get());
+        if (account.getToken() == null) {
+
+            String token = tokenSupplier.get();
+            accountRepository.generateToken(account.getId(), token);
+            account.setToken(token);
         }
 
         account.setPassword(null);
 
-        System.out.println("account found");
-
-        return account;
+        return success(account);
     }
 
     @RequestMapping("/disconnect")
-    public void disconnect(@RequestParam(value = "username") String username, @RequestParam(value = "password") String password) {
+    public RestResponse disconnect(@RequestParam(value = "username") String username, @RequestParam(value = "password") String password) {
+
+        Account account = accountRepository.findByUsernameAndPassword(username, password);
+
+        if (account == null) {
+
+            if (accountRepository.findByUsername(username) == null) {
+
+                return error(ACCOUNT_NOT_FOUND);
+            } else {
+
+                return error(BAD_CREDENTIALS);
+            }
+        }
+
+        if (account.getToken() == null) {
+
+            return error(REQUEST_ALREADY_DONE_OR_IN_PROGRESS);
+        }
 
         accountRepository.discardToken(accountRepository.findByUsernameAndPassword(username, password).getId());
+
+        return success();
     }
 
     @RequestMapping("/tokenDisconnect")
-    public void tokenDisconnect(@RequestParam(value = "token") String token) {
+    public RestResponse tokenDisconnect(@RequestParam(value = "token") String token) {
 
-        accountRepository.discardToken(((Account) accountRepository.findByToken(token)).getId());
+        Account account = accountRepository.findByToken(token);
+
+        if (account == null) {
+
+            return error(INVALID_TOKEN);
+        }
+
+        if (account.getToken() == null) {
+
+            return error(REQUEST_ALREADY_DONE_OR_IN_PROGRESS);
+        }
+
+        accountRepository.discardToken(accountRepository.findByToken(token).getId());
+
+        return success();
     }
 
     @RequestMapping("")
-    public Account infos(@RequestParam(value = "username", required = false) String username, @RequestParam(value = "id", required = false) Integer id) {
+    public RestResponse<Account> infos(@RequestParam(value = "username", required = false) String username, @RequestParam(value = "id", required = false) Integer id) {
 
-        if (username != null && accountRepository.findByUsername(username) != null) {
+        if (username != null) {
 
-            id = accountRepository.findByUsername(username);
-        }
+            Account account = accountRepository.findByUsername(username);
 
-        if (id != null && accountRepository.findById(id).isPresent()) {
+            if (account != null) {
 
-            return accountRepository.findById(id).get().setPassword(null).setToken(null);
+                return success(account);
+            } else {
+
+                return error(ACCOUNT_NOT_FOUND);
+            }
+        } else if (id != null) {
+
+            Optional<Account> optionalAccount = accountRepository.findById(id);
+
+            return optionalAccount.map(account -> RestResponse.success(account.setPassword(null).setToken(null)))
+                    .orElseGet(() -> error(ACCOUNT_NOT_FOUND));
         } else {
 
-            return null;
+            return error(MISSING_PARAMETER);
         }
-    }
-
-    @ExceptionHandler(IllegalArgumentException.class)
-    public void handleIllegalArgumentException(IllegalArgumentException e) {
-
-        e.printStackTrace();
     }
 }

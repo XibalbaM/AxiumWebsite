@@ -55,8 +55,8 @@ public interface AccountRepository extends JpaRepository<Account, Integer> {
      * @Param username The username to search.
      * @Return The account id.
      */
-    @Query("SELECT a.id FROM Account a WHERE a.username = ?1")
-    Integer findByUsername(String username);
+    @Query("SELECT a FROM Account a WHERE a.username = ?1")
+    Account findByUsername(String username);
 
     /**
      * Find an account by its email.

@@ -1,10 +1,13 @@
 package fr.xibalba.axiumwebsite.api.tables;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
+import org.hibernate.Hibernate;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "roles")
@@ -13,7 +16,7 @@ import java.util.List;
 @Setter
 @Getter
 @ToString
-@EqualsAndHashCode
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Role {
 
     @Id
@@ -48,4 +51,19 @@ public class Role {
     @JsonBackReference
     @ManyToMany(mappedBy = "roles")
     List<Account> accounts;
+
+    @Override
+    public boolean equals(Object o) {
+
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        Role role = (Role) o;
+        return id != null && Objects.equals(id, role.id);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return getClass().hashCode();
+    }
 }

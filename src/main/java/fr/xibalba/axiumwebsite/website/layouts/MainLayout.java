@@ -1,5 +1,6 @@
 package fr.xibalba.axiumwebsite.website.layouts;
 
+import com.vaadin.flow.component.ReconnectDialogConfiguration;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
@@ -24,6 +25,12 @@ public class MainLayout extends AppLayout {
 
         createHeader();
         createDrawer();
+
+        ReconnectDialogConfiguration reconnectDialogConfiguration = UI.getCurrent().getReconnectDialogConfiguration();
+        reconnectDialogConfiguration.setReconnectAttempts(100);
+        reconnectDialogConfiguration.setReconnectInterval(1000);
+        reconnectDialogConfiguration.setDialogText(getTranslation("reconnect-dialog.trying"));
+        reconnectDialogConfiguration.setDialogTextGaveUp(getTranslation("reconnect-dialog.failed"));
     }
 
     private void createHeader() {

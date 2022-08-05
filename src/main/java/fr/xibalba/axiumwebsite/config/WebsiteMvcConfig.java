@@ -1,4 +1,4 @@
-package fr.xibalba.axiumwebsite.configs;
+package fr.xibalba.axiumwebsite.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

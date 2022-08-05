@@ -1,4 +1,4 @@
-package fr.xibalba.axiumwebsite.configs;
+package fr.xibalba.axiumwebsite.config;
 
 import fr.xibalba.axiumwebsite.security.SecurityConfiguration;
 import org.springframework.web.WebApplicationInitializer;
